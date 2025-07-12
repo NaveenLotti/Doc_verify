@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Checker</title>
+    <link rel="stylesheet" href="../static/index_styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>📄 Document Checker</h1>
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <label for="file">Upload your document (PDF or DOCX):</label>
+            <input type="file" name="file" id="file" accept=".pdf, .docx" required>
+
+            <div id="conditions">
+                <h3>Add Conditions</h3>
+                <div class="condition">
+                    <input type="text" name="condition_key" placeholder="Condition (e.g. Badminton Court)" required>
+                    <input type="text" name="condition_value" placeholder="Required Value (e.g. 1)" required>
+                </div>
+            </div>
+            <button type="button" onclick="addCondition()" class="add-btn">+ Add Another Condition</button>
+
+            <button type="submit" id="submitBtn">Check Document</button>
+            <div id="loading" class="loader" style="display:none;">Checking document... Please wait.</div>
+        </form>
+
+        {% if error %}
+        <div class="message error animate-pop">{{ error }}</div>
+        {% endif %}
+
+        {% if success %}
+        <div class="message success animate-pop">{{ success }}</div>
+        {% endif %}
+
+        {% if failures %}
+        <div class="message failures animate-pop">
+            <p>The document is not approved for the following reasons:</p>
+            <ul>
+                {% for failure in failures %}
+                <li>{{ failure }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        function addCondition() {
+            const container = document.getElementById('conditions');
+            const div = document.createElement('div');
+            div.classList.add('condition');
+            div.innerHTML = `
+                <input type="text" name="condition_key" placeholder="Condition (e.g. Gymnasium)" required>
+                <input type="text" name="condition_value" placeholder="Required Value (e.g. Yes or 2)" required>
+                <button type="button" class="remove-btn" onclick="removeCondition(this)">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        document.querySelector("form").addEventListener("submit", () => {
+            document.getElementById("submitBtn").disabled = true;
+            document.getElementById("loading").style.display = "block";
+        });
+        function removeCondition(button) {
+            button.parentElement.remove();
+        }
+    </script>
+</body>
+
+</html>
